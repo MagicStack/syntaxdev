@@ -1,0 +1,24 @@
+{
+  "name": "syntaxtest",
+  "version": "0.0.1",
+  "description": "Unit testing framework for TextMate/Sublime/Atom syntaxes.",
+  "main": "index.js",
+  "author": "Yury Selivanov <yury@magic.io>",
+  "license": "MIT",
+  "bin": {
+    "syntaxtest": "bin/syntaxtest.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MagicStack/syntaxtest"
+  },
+  "dependencies": {
+    "first-mate": "^5.0.2",
+    "js-yaml": "^3.4.2",
+    "temp": "^0.8.3",
+    "argparse": "^1.0.2",
+    "diff": "^2.1.3",
+    "chalk": "^1.1.1",
+    "underscore": "^1.8.3"
+  }
+}
