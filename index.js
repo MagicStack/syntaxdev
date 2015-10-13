@@ -106,8 +106,11 @@ function testFile(file, grammar, options) {
                 result.push(line);
             }
 
-            return result.join('\n');
+            result.push('@@@@@@')
         }
+
+        result.pop();
+        return result.join('\n');
     }
 
     var buf = fs.readFileSync(file, 'utf8'),
