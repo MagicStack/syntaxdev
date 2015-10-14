@@ -8,7 +8,7 @@ var chalk   = require("chalk"),
     jsdiff  = require("diff"),
     temp    = require("temp").track(),
     _       = require("underscore"),
-    cson    = require("CSON"),
+    cson    = require("cson"),
     plist   = require("plist");
 
 
