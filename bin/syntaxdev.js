@@ -28,17 +28,21 @@ testCli.addArgument([ '--tests' ], {
     required: true
 });
 
-
 testCli.addArgument([ '--no-color' ], {
     help: "Don't use colored output",
     action: 'storeTrue',
     default: false
 });
 
-
 testCli.addArgument([ '--syntax' ], {
     help: 'Syntax file in YAML format, ex: "--syntax FooLang.YAML-tmLanguage"',
     required: true
+});
+
+testCli.addArgument([ '--add-syntax' ], {
+    help: 'Additional syntax files in YAML format',
+    nargs: '*',
+    action: 'append'
 });
 
 
@@ -76,7 +80,9 @@ function main() {
             _.chain(options.tests).flatten().uniq().sort().value(),
             options.syntax,
             {
-                no_color: options.no_color
+                no_color: options.no_color,
+                add_syntaxes: _.chain(options.add_syntax).flatten().
+                                                    uniq().sort().value()
             }
         );
     } else if (options.command == 'build-cson') {

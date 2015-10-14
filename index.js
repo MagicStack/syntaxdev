@@ -12,21 +12,31 @@ var chalk   = require("chalk"),
     plist   = require("plist");
 
 
-function compileGrammar(grammarFile) {
-    var tmp = temp.openSync();
+function compileGrammar(grammarFile, additionalGrammars) {
+    function _compile(filename, registry) {
+        var tmp = temp.openSync();
 
-    try {
-        var yamlSource = fs.readFileSync(grammarFile, 'utf8'),
-            yamlSchema = yaml.safeLoad(yamlSource);
+        try {
+            var yamlSource = fs.readFileSync(filename, 'utf8'),
+                yamlSchema = yaml.safeLoad(yamlSource);
 
-        fs.writeSync(tmp.fd, JSON.stringify(yamlSchema));
-        fs.closeSync(tmp.fd);
+            fs.writeSync(tmp.fd, JSON.stringify(yamlSchema));
+            fs.closeSync(tmp.fd);
 
-        var registry = new mate.GrammarRegistry,
-            grammar = registry.loadGrammarSync(tmp.path);
+            return registry.loadGrammarSync(tmp.path);
+        }
+        finally {
+            temp.cleanupSync();
+        }
     }
-    finally {
-        temp.cleanupSync();
+
+    var registry = new mate.GrammarRegistry,
+        grammar = _compile(grammarFile, registry);
+
+    if (additionalGrammars) {
+        for (var i = 0; i < additionalGrammars.length; i++) {
+            _compile(additionalGrammars[i], registry);
+        }
     }
 
     return grammar;
@@ -171,7 +181,7 @@ function testFile(file, grammar, options) {
 function test(testFiles, grammarFile, options) {
     options = options || {};
 
-    var grammar = compileGrammar(grammarFile),
+    var grammar = compileGrammar(grammarFile, options.add_syntaxes),
         sep = '--------',
         passed = 0,
         failed = 0,
