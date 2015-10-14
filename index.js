@@ -7,7 +7,9 @@ var chalk   = require("chalk"),
     mate    = require("first-mate"),
     jsdiff  = require("diff"),
     temp    = require("temp").track(),
-    _       = require('underscore');
+    _       = require("underscore"),
+    cson    = require("CSON"),
+    plist   = require("plist");
 
 
 function compileGrammar(grammarFile) {
@@ -166,7 +168,7 @@ function testFile(file, grammar, options) {
 }
 
 
-function run(testFiles, grammarFile, options) {
+function test(testFiles, grammarFile, options) {
     options = options || {};
 
     var grammar = compileGrammar(grammarFile),
@@ -214,4 +216,26 @@ function run(testFiles, grammarFile, options) {
 }
 
 
-module.exports = run;
+function buildCson(inName, outName) {
+    var yamlSource = fs.readFileSync(inName, 'utf8'),
+        yamlSchema = yaml.safeLoad(yamlSource),
+        csonSource = cson.createCSONString(yamlSchema, {indent: 2});
+
+    fs.writeFileSync(outName, csonSource);
+}
+
+
+function buildPList(inName, outName) {
+    var yamlSource = fs.readFileSync(inName, 'utf8'),
+        yamlSchema = yaml.safeLoad(yamlSource),
+        plistSource = plist.build(yamlSchema);
+
+    fs.writeFileSync(outName, plistSource);
+}
+
+
+module.exports = {
+    test: test,
+    buildCson: buildCson,
+    buildPList: buildPList
+};
