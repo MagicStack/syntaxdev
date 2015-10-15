@@ -15,13 +15,14 @@ var chalk   = require("chalk"),
 
 function readGrammarFile(filename) {
     function read(filename, vars) {
-        var yamlSource = fs.readFileSync(filename, 'utf8');
+        var yamlSource = fs.readFileSync(filename, 'utf8'),
+            hop = Object.prototype.hasOwnProperty;
 
         if (vars) {
             yamlSource = yamlSource.replace(
                 /\$\{(\w+)\}/g,
                 function(all, name) {
-                    if (name && vars[name]) {
+                    if (name && hop.call(vars, name)) {
                         return vars[name];
                     } else {
                         return all;
