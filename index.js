@@ -134,7 +134,20 @@ function testFile(file, grammar, options) {
                     [
                         padRight(value, 14),
                         ' : ',
-                        _.chain(scopes).uniq().sort().value().join(', ')
+
+                        _.chain(scopes)
+                         .flatten()
+                         .reduce(
+                            function(m, v) {
+                              m.push.apply(m, v.split(/\s+/g));
+                              return m;
+                            },
+                            []
+                          )
+                         .uniq()
+                         .sort()
+                         .value()
+                         .join(', ')
                     ].join('')
                 )
             }
