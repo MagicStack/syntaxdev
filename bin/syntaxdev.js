@@ -19,6 +19,15 @@ var sub = cli.addSubparsers({
     dest:    'command'
 });
 
+
+var listCli = sub.addParser('scopes');
+
+listCli.addArgument([ '--syntax' ], {
+    help: 'Syntax file in YAML format, ex: "--syntax FooLang.YAML-tmLanguage"',
+    required: true
+});
+
+
 var testCli = sub.addParser('test');
 
 testCli.addArgument([ '--tests' ], {
@@ -89,6 +98,8 @@ function main() {
         syntaxdev.buildCson(options.in, options.out);
     } else if (options.command == 'build-plist') {
         syntaxdev.buildPList(options.in, options.out);
+    } else if (options.command == 'scopes') {
+        console.log(syntaxdev.listScopes(options.syntax).join('\n'));
     }
 }
 

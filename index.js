@@ -303,8 +303,52 @@ function buildPList(inName, outName) {
 }
 
 
+function listScopes(grammarFile) {
+    var schema = readGrammarFile(grammarFile),
+        scopes = [];
+
+    function addName(name) {
+        scopes.push.apply(scopes, name.split(/\s+/g));
+    }
+
+    function visit(o) {
+        if (_.has(o, 'name')) {
+            addName(o.name);
+        }
+
+        if (_.has(o, 'patterns')) {
+            _.each(o.patterns, visit);
+        }
+
+        _.each(
+            ['beginCaptures', 'endCaptures', 'captures'],
+            function(prop) {
+                if (!_.has(o, prop)) {
+                    return
+                }
+
+                _.each(o[prop], function(v) {
+                    if (_.has(v, 'name')) {
+                        addName(v.name);
+                    }
+                })
+            }
+        );
+    }
+
+    if (schema.repository) {
+        _.each(schema.repository, function(v, k) {
+            visit(v);
+        });
+    }
+
+    return _.chain(scopes).uniq().sort().value();
+}
+
+
 module.exports = {
     test: test,
     buildCson: buildCson,
-    buildPList: buildPList
+    buildPList: buildPList,
+    listScopes: listScopes
 };
