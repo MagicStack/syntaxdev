@@ -6,6 +6,7 @@
 var syntaxdev = require('../index'),
     argparse = require('argparse'),
     packageInfo = require('../package.json'),
+    yaml = require('js-yaml'),
     _ = require('underscore');
 
 
@@ -84,22 +85,31 @@ buildPListCli.addArgument([ '--out' ], {
 function main() {
     var options = cli.parseArgs();
 
-    if (options.command == 'test') {
-        syntaxdev.test(
-            _.chain(options.tests).flatten().uniq().sort().value(),
-            options.syntax,
-            {
-                no_color: options.no_color,
-                add_syntaxes: _.chain(options.add_syntax).flatten().
-                                                    uniq().sort().value()
-            }
-        );
-    } else if (options.command == 'build-cson') {
-        syntaxdev.buildCson(options.in, options.out);
-    } else if (options.command == 'build-plist') {
-        syntaxdev.buildPList(options.in, options.out);
-    } else if (options.command == 'scopes') {
-        console.log(syntaxdev.listScopes(options.syntax).join('\n'));
+    try {
+        if (options.command == 'test') {
+            syntaxdev.test(
+                _.chain(options.tests).flatten().uniq().sort().value(),
+                options.syntax,
+                {
+                    no_color: options.no_color,
+                    add_syntaxes: _.chain(options.add_syntax).flatten().
+                                                        uniq().sort().value()
+                }
+            );
+        } else if (options.command == 'build-cson') {
+            syntaxdev.buildCson(options.in, options.out);
+        } else if (options.command == 'build-plist') {
+            syntaxdev.buildPList(options.in, options.out);
+        } else if (options.command == 'scopes') {
+            console.log(syntaxdev.listScopes(options.syntax).join('\n'));
+        }
+    } catch (e) {
+        if (e instanceof yaml.YAMLException) {
+             console.log(e.message);
+             process.exit(2);
+        } else {
+            throw e;
+        }
     }
 }
 
