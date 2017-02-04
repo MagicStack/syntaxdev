@@ -40,7 +40,13 @@ function readGrammarFile(filename, significantScopeLast) {
                 });
         }
 
-        var schema = yaml.safeLoad(yamlSource);
+        try {
+            var schema = yaml.safeLoad(yamlSource);
+        } catch (e) {
+            // Annotate with file name.
+            e.message = filename + ': ' + e.message;
+            throw e;
+        }
 
         if (schema.repository
             && schema.repository.$apply
