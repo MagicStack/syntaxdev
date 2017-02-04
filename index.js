@@ -63,9 +63,7 @@ function readGrammarFile(filename, significantScopeLast) {
         return schema;
     }
 
-    var schema = read(filename, {});
-
-    if (significantScopeLast) {
+    function patch(o) {
         function patchName(name) {
             var names = name.split(/[\s\n]+/);
             if (names.length > 1) {
@@ -74,31 +72,33 @@ function readGrammarFile(filename, significantScopeLast) {
             return names.join(' ');
         }
 
-        function patch(o) {
-            if (_.has(o, 'name')) {
-                o.name = patchName(o.name);
-            }
-
-            if (_.has(o, 'patterns')) {
-                _.each(o.patterns, patch);
-            }
-
-            _.each(
-                ['beginCaptures', 'endCaptures', 'captures'],
-                function(prop) {
-                    if (!_.has(o, prop)) {
-                        return
-                    }
-
-                    _.each(o[prop], function(v) {
-                        if (_.has(v, 'name')) {
-                            v.name = patchName(v.name);
-                        }
-                    })
-                }
-            );
+        if (_.has(o, 'name')) {
+            o.name = patchName(o.name);
         }
 
+        if (_.has(o, 'patterns')) {
+            _.each(o.patterns, patch);
+        }
+
+        _.each(
+            ['beginCaptures', 'endCaptures', 'captures'],
+            function(prop) {
+                if (!_.has(o, prop)) {
+                    return
+                }
+
+                _.each(o[prop], function(v) {
+                    if (_.has(v, 'name')) {
+                        v.name = patchName(v.name);
+                    }
+                })
+            }
+        );
+    }
+
+    var schema = read(filename, {});
+
+    if (significantScopeLast) {
         if (schema.repository) {
             _.each(schema.repository, function(v, k) {
                 patch(v);
