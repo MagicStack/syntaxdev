@@ -55,6 +55,36 @@ testCli.addArgument([ '--add-syntax' ], {
 });
 
 
+var atomSpecCli = sub.addParser('atom-spec');
+
+atomSpecCli.addArgument([ '--tests' ], {
+    help: 'Test files, ex: "--tests test/**/*.test"',
+    nargs: '*',
+    action: 'append',
+    required: true
+});
+
+atomSpecCli.addArgument([ '--syntax' ], {
+    help: 'Syntax file in YAML format, ex: "--syntax FooLang.YAML-tmLanguage"',
+    required: true
+});
+
+atomSpecCli.addArgument([ '--add-syntax' ], {
+    help: 'Additional syntax files in YAML format',
+    nargs: '*',
+    action: 'append'
+});
+
+atomSpecCli.addArgument([ '--out' ], {
+    help: '"out" JS file',
+    required: true
+});
+
+atomSpecCli.addArgument([ '--package-name' ], {
+    required: true
+});
+
+
 var buildCsonCli = sub.addParser('build-cson');
 
 buildCsonCli.addArgument([ '--in' ], {
@@ -92,6 +122,17 @@ function main() {
                 no_color: options.no_color,
                 add_syntaxes: _.chain(options.add_syntax).flatten().
                                                     uniq().sort().value()
+            }
+        );
+    } else if (options.command == 'atom-spec') {
+        syntaxdev.generateAtomSpec(
+            _.chain(options.tests).flatten().uniq().sort().value(),
+            options.syntax,
+            {
+                out: options.out,
+                add_syntaxes: _.chain(options.add_syntax).flatten().
+                                                    uniq().sort().value(),
+                packageName: options.package_name,
             }
         );
     } else if (options.command == 'build-cson') {
