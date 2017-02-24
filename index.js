@@ -361,7 +361,7 @@ function generateAtomSpec(testFiles, grammarFile, options) {
     var grammar = compileGrammar(grammarFile, options.add_syntaxes),
         specLines = [];
 
-        console.log(grammar.scopeName);
+    testFiles.sort();
 
     for (var fi = 0; fi < testFiles.length; fi++) {
         var fileName = testFiles[fi],
@@ -420,10 +420,11 @@ function generateAtomSpec(testFiles, grammarFile, options) {
     ];
 
     for (i = 0; i < specLines.length; i++) {
+        buf.push('');
         buf.push('  it(' + JSON.stringify(specLines[i].file) + ', ');
-        buf.push('  function() {')
-        buf.push('    ' + specLines[i].lines.join('\n    '));
-        buf.push('  });');
+        buf.push('    function() {')
+        buf.push('      ' + specLines[i].lines.join('\n      '));
+        buf.push('    });');
     }
 
     buf.push('});\n');
