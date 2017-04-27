@@ -1,6 +1,6 @@
 {
   "name": "syntaxdev",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Unit testing framework for TextMate/Sublime/Atom syntaxes.",
   "main": "index.js",
   "author": "Yury Selivanov <yury@magic.io>",
@@ -13,7 +13,7 @@
     "url": "https://github.com/MagicStack/syntaxdev"
   },
   "dependencies": {
-    "first-mate": "^6.2.0",
+    "first-mate": "^7.0.4",
     "js-yaml": "^3.4.2",
     "temp": "^0.8.3",
     "argparse": "^1.0.2",
