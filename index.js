@@ -24,6 +24,37 @@ function readGrammarFile(filename, significantScopeLast) {
           when we generate schema for SublimeText.
     */
 
+    function _apply(obj) {
+        if (obj instanceof Array) {
+            for (var i = 0; i < obj.length; i++) {
+                _apply(obj[i]);
+            }
+        }
+        else if (obj && typeof obj == 'object') {
+            if (obj.$apply && obj.$apply instanceof Array) {
+                var specs = obj.$apply;
+                for (var i = 0; i < specs.length; i++) {
+                    var spec = specs[i];
+
+                    var inner = read(path.join(path.dirname(filename),
+                                               spec.file),
+                                     spec.vars);
+                    var inner_keys = Object.keys(inner);
+                    for (var j = 0; j < inner_keys.length; j++) {
+                        obj[inner_keys[j]] = inner[inner_keys[j]];
+                    }
+                }
+                delete obj['$apply'];
+            }
+            else {
+                var keys = Object.keys(obj);
+                for (var i = 0; i < keys.length; i++) {
+                    _apply(obj[keys[i]]);
+                }
+            }
+        }
+    }
+
     function read(filename, vars) {
         var yamlSource = fs.readFileSync(filename, 'utf8'),
             hop = Object.prototype.hasOwnProperty;
@@ -41,25 +72,7 @@ function readGrammarFile(filename, significantScopeLast) {
         }
 
         var schema = yaml.safeLoad(yamlSource);
-
-        if (schema.repository
-            && schema.repository.$apply
-            && schema.repository.$apply instanceof Array)
-        {
-            var specs = schema.repository.$apply;
-            for (var i = 0; i < specs.length; i++) {
-                var spec = specs[i];
-
-                var inner = read(path.join(path.dirname(filename),
-                                           spec.file),
-                                 spec.vars);
-
-                _.extend(schema.repository, inner.repository);
-            }
-
-            delete schema.repository.$apply;
-        }
-
+        _apply(schema);
         return schema;
     }
 
