@@ -45,6 +45,7 @@ function readGrammarFile(filename, significantScopeLast) {
                     }
                 }
                 delete obj['$apply'];
+                _apply(obj);
             }
             else {
                 var keys = Object.keys(obj);
