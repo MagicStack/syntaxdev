@@ -299,18 +299,25 @@ function testFile(file, grammar, options) {
     var result = tokenize(source);
 
     if (test != result) {
+        var extra = '';
+        if (options.overwrite_tests) {
+            extra = ', testfile updated';
+            var buf = [source, '\n\n\n', result];
+            fs.writeFileSync(file, buf.join('\n').trim() + '\n');
+        }
+
         if (test) {
             return {
                 file: file,
                 status: 'fail',
-                error: 'Output different from expected',
+                error: 'Output different from expected' + extra,
                 body: getDiff(test, result)
             }
         } else {
             return {
                 file: file,
                 status: 'fail',
-                error: 'No expected output set',
+                error: 'No expected output set' + extra,
                 body: result
             }
         }

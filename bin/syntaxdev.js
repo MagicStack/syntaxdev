@@ -43,6 +43,12 @@ testCli.addArgument([ '--no-color' ], {
     default: false
 });
 
+testCli.addArgument([ '--overwrite-tests' ], {
+    help: "Overwrite output for tests with the current output",
+    action: 'storeTrue',
+    default: false
+});
+
 testCli.addArgument([ '--syntax' ], {
     help: 'Syntax file in YAML format, ex: "--syntax FooLang.YAML-tmLanguage"',
     required: true
@@ -120,6 +126,7 @@ function main() {
             options.syntax,
             {
                 no_color: options.no_color,
+                overwrite_tests: options.overwrite_tests,
                 add_syntaxes: _.chain(options.add_syntax).flatten().
                                                     uniq().sort().value()
             }
