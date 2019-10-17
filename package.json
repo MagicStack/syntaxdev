@@ -1,6 +1,6 @@
 {
   "name": "syntaxdev",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Unit testing framework for TextMate/Sublime/Atom syntaxes.",
   "main": "index.js",
   "author": "Yury Selivanov <yury@magic.io>",
